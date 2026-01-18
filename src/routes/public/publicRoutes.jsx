@@ -10,7 +10,7 @@ const publicRoutes = [
   { path: "/login", component: <Login /> },
   { path: "/register", component: <Register /> },
   { path: "/forgot-password", component: <ForgotPwd /> },
-  { path: "/reset/:uid/:token", component: <ResetPwd /> },
+  { path: "/reset/password/:uid/:token", component: <ResetPwd /> },
   { path: "/unauthorized", component: <Unauthorized /> },
 ];
 

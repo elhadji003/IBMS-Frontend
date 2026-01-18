@@ -1,15 +1,36 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { LogIn, Mail, Lock, ArrowRight } from "lucide-react";
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { LogIn, Mail, Lock, ArrowRight, Loader2 } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { useLoginMutation } from "../../backend/features/auth/authApi";
+import { useDispatch } from "react-redux";
+import { setCredentials } from "../../backend/features/auth/authSlice";
+import toast from "react-hot-toast";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const { register, handleSubmit } = useForm();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Connexion avec :", { email, password });
-    // Ici on ajoutera plus tard la logique avec Firebase ou ton API
+  const [loginUser, { isLoading }] = useLoginMutation();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const onSubmit = async (credentials) => {
+    try {
+      const res = await loginUser(credentials).unwrap();
+      dispatch(setCredentials(res));
+
+      const role = res?.user?.role;
+
+      // console.log("ROLE 👉", res.user.role);
+
+      if (role === "admin") navigate("/admin/dashboard");
+      else if (role === "user") navigate("/user/dashboard");
+      else navigate("/unauthorized");
+      toast.success("Connexion réussie !");
+    } catch (error) {
+      console.log("Erreur :", error);
+      toast.error(error?.data?.message || "Échec de la connexion");
+    }
   };
 
   return (
@@ -24,9 +45,9 @@ export default function Login() {
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow-xl border border-gray-100 sm:rounded-2xl sm:px-10">
-          <form className="space-y-6" onSubmit={handleSubmit}>
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md max-sm:px-4 max-sm:py-4">
+        <div className="bg-100 py-8 px-4 shadow-xl border border-gray-100 sm:rounded-2xl sm:px-10">
+          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
             {/* Email */}
             <div>
               <label className="block text-sm font-medium text-gray-700">
@@ -39,8 +60,7 @@ export default function Login() {
                 <input
                   type="email"
                   required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  {...register("email", { required: true })}
                   className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-xl shadow-sm focus:ring-sky-500 focus:border-sky-500 sm:text-sm"
                   placeholder="nom@exemple.com"
                 />
@@ -59,8 +79,7 @@ export default function Login() {
                 <input
                   type="password"
                   required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  {...register("password", { required: true })}
                   className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-xl shadow-sm focus:ring-sky-500 focus:border-sky-500 sm:text-sm"
                   placeholder="••••••••"
                 />
@@ -69,22 +88,27 @@ export default function Login() {
 
             <div className="flex items-center justify-between">
               <div className="text-sm">
-                <a
-                  href="#"
+                <Link
+                  to={"/forgot-password"}
                   className="font-medium text-sky-600 hover:text-sky-500"
                 >
                   Mot de passe oublié ?
-                </a>
+                </Link>
               </div>
             </div>
 
             {/* Bouton de validation */}
             <div>
               <button
+                disabled={isLoading}
                 type="submit"
                 className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 transition-all"
               >
-                Se connecter <ArrowRight className="ml-2 h-4 w-4" />
+                {isLoading ? (
+                  <Loader2 className="animate-spin -ml-1 mr-3 h-5 w-5" />
+                ) : (
+                  "Se connecter"
+                )}
               </button>
             </div>
           </form>
