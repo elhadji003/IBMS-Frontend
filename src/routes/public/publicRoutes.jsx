@@ -3,7 +3,7 @@ import Login from "../../pages/auth/Login";
 import Register from "../../pages/auth/Register";
 import ResetPwd from "../../pages/auth/ResetPwd";
 import Acceuil from "../../pages/home/Acceuil";
-import Unauthorized from "../../pages/unauthorized";
+import Unauthorized from "../../pages/Unauthorized";
 
 const publicRoutes = [
   { path: "/", component: <Acceuil /> },
