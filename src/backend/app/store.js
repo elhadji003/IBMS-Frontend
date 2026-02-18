@@ -5,6 +5,7 @@ import storage from "redux-persist/lib/storage";
 import authReducer from "../features/auth/authSlice";
 import { authApi } from "../features/auth/authApi";
 import { userApi } from "../features/user/userApi";
+import { coursApi } from "../features/formation/coursApi";
 
 const persistConfig = {
   key: "root",
@@ -16,6 +17,7 @@ const rootReducer = combineReducers({
   auth: authReducer,
   [authApi.reducerPath]: authApi.reducer,
   [userApi.reducerPath]: userApi.reducer,
+  [coursApi.reducerPath]: coursApi.reducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -30,6 +32,7 @@ export const store = configureStore({
     }).concat(
       authApi.middleware, 
       userApi.middleware, 
+      coursApi.middleware
     ),
   devTools: process.env.NODE_ENV !== "production",
 });
