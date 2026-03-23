@@ -8,13 +8,17 @@ export const coursApi = createApi({
     baseQuery: baseQueryWithReauth,
     tagTypes: ["CoursPartenaires"],
     endpoints: (builder) => ({
-        getCoursPartenaires: builder.query({
-            query: () => ({
-                url: `${COURS_API}courses/`,
-                method: "GET",
-            }),
-            providesTags: ["CoursPartenaires"],
-        }),
+        // ... dans ton coursApi.js
+getCoursPartenaires: builder.query({
+    query: () => `${COURS_API}courses/`,
+    providesTags: (result) =>
+        result
+            ? [
+                ...result.results.map(({ id }) => ({ type: 'CoursPartenaires', id })),
+                { type: 'CoursPartenaires', id: 'LIST' },
+              ]
+            : [{ type: 'CoursPartenaires', id: 'LIST' }],
+}),
         getCoursById: builder.query({
             query: (id) => ({
                 url: `${COURS_API}courses/${id}/`,

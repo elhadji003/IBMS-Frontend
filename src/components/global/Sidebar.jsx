@@ -19,27 +19,17 @@ const menuItems = [
     label: "Ma Certification",
     path: "/user/certification",
   },
-  { icon: CreditCard, label: "Paiements", path: "/dashboard/billing" },
 ];
 
 export default function Sidebar({ closeMobileMenu }) {
   const location = useLocation();
 
   return (
-    /* Ajout de :
-       - fixed : pour fixer la sidebar
-       - inset-y-0 : pour qu'elle prenne toute la hauteur (top 0 et bottom 0)
-       - left-0 : collée à gauche
-       - w-64 : une largeur fixe (tu peux l'ajuster)
-       - z-50 : pour qu'elle passe au dessus du contenu sur mobile
-    */
     <div className="fixed inset-y-0 left-0 w-64 h-full flex flex-col border-r border-gray-100 bg-white z-50">
-      {/* Logo */}
       <div className="p-6">
         <h2 className="text-2xl font-bold text-sky-600">IBMS</h2>
       </div>
 
-      {/* Menu */}
       <nav className="flex-1 px-4 space-y-2 overflow-y-auto">
         {menuItems.map((item) => {
           const isActive = location.pathname === item.path;
